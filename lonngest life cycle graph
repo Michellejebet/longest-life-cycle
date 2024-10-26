@@ -1,0 +1,40 @@
+#include <vector>
+#include <unordered_map>
+#include <algorithm>
+
+using namespace std;
+
+class Solution {
+public:
+    int longestCycle(vector<int>& edges) {
+        int n = edges.size();
+        vector<int> visited(n, -1); 
+        int longest_cycle = -1;
+
+        auto dfs = [&](int start) {
+            unordered_map<int, int> visited_at;
+            int current_node = start;
+            int current_depth = 0;
+
+            while (current_node != -1 && visited[current_node] == -1) {
+                visited[current_node] = current_depth;
+                visited_at[current_node] = current_depth;
+                current_node = edges[current_node];
+                current_depth++;
+            }
+
+            if (current_node != -1 && visited_at.count(current_node)) {
+                int cycle_length = current_depth - visited_at[current_node];
+                longest_cycle = max(longest_cycle, cycle_length);
+            }
+        };
+
+        for (int i = 0; i < n; ++i) {
+            if (visited[i] == -1) {
+                dfs(i);
+            }
+        }
+
+        return longest_cycle;
+    }
+};
